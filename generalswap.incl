@@ -1,0 +1,62 @@
+#!/bin/sh
+
+SHARE_BASE="$HOME/.local/share"
+CONFIG_BASE="$HOME/.config"
+
+swap_user_directories() {
+    local USER 
+    USER="$1"
+    shift    # "$@" should now be a list of paths to swap
+
+    if ! ensure_symlinks "$@"; then
+        return $?
+    fi
+
+    if ! ensure_user_directories "$USER" "$@"; then
+        return $?
+    fi
+
+    do_swap_user_directories "$USER" "$@"
+}
+
+ensure_symlinks() {
+    local FILE_PATH
+    for FILE_PATH in "$@"; do
+        if [ ! -h "$FILE_PATH" ]; then
+            echo "ERROR: $FILE_PATH is not a symlink! bailing!"
+            return 1
+        fi
+    done
+}
+
+ensure_user_directories() {
+    local USER BASE_PATH USER_PATH
+    USER="$1"
+    shift    # "$@" should now be a list of paths to swap
+
+    for BASE_PATH in "$@"; do
+        USER_PATH="$BASE_PATH-$USER"
+        if [ ! -d "$USER_PATH" ]; then
+            if [ -e "$USER_PATH" ]; then
+                echo "ERROR: $USER_PATH is not a directory! bailing!"
+                return 1
+            else
+                echo "$USER_PATH does not exist... creating it..."
+                mkdir "$USER_PATH"
+            fi
+        fi
+    done
+}
+
+do_swap_user_directories() {
+    local USER BASE_PATH USER_PATH
+    USER="$1"
+    shift    # "$@" should now be a list of paths to swap
+
+    for BASE_PATH in "$@"; do
+        USER_PATH="$BASE_PATH-$USER"
+        rm "$BASE_PATH"
+        ln -s "$USER_PATH" "$BASE_PATH"
+        ls -l --color "$BASE_PATH"
+    done
+}

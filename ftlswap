@@ -1,0 +1,6 @@
+#!/bin/sh
+
+. generalswap.incl
+FTL_SHARE="$SHARE_BASE/FasterThanLight"
+USER="${1:-default}"
+swap_user_directories "$USER" "$FTL_SHARE"

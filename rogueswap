@@ -1,0 +1,7 @@
+#!/bin/sh
+
+. generalswap.incl
+ROGUE_SHARE="$SHARE_BASE/RogueLegacyStorageContainer" 
+ROGUE_CONFIG="$CONFIG_BASE/RogueLegacyStorageContainer"
+USER="${1:-default}"
+swap_user_directories "$USER" "$ROGUE_SHARE" "$ROGUE_CONFIG"
